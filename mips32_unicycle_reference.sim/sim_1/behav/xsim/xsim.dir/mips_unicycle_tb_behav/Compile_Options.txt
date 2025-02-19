@@ -1,0 +1,1 @@
+-wto "c44747501a9e4429a45be4e550bf75f7" --debug "typical" --relax --mt "2" -L "xil_defaultlib" -L "secureip" --snapshot "mips_unicycle_tb_behav" "xil_defaultlib.mips_unicycle_tb" -log "elaborate.log" 
