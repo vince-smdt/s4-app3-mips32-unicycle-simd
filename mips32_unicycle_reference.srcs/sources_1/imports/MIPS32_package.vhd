@@ -19,21 +19,27 @@ use ieee.numeric_std.all;
 package MIPS32_package is
     -- codes d'opération internes de l'ALU
     -- Nous définissons ces codes et on aurait pu adopter un autre encodage
-    constant ALU_AND  : std_logic_vector( 3 downto 0 ) := "0000";
-    constant ALU_OR   : std_logic_vector( 3 downto 0 ) := "0001";
-    constant ALU_ADD  : std_logic_vector( 3 downto 0 ) := "0010";
-    constant ALU_SLTU : std_logic_vector( 3 downto 0 ) := "0011";
-    constant ALU_SUB  : std_logic_vector( 3 downto 0 ) := "0110";
-    constant ALU_SLT  : std_logic_vector( 3 downto 0 ) := "0111";
+    constant ALU_AND  : std_logic_vector( 4 downto 0 ) := "00000";
+    constant ALU_OR   : std_logic_vector( 4 downto 0 ) := "00001";
+    constant ALU_ADD  : std_logic_vector( 4 downto 0 ) := "00010";
+    constant ALU_SLTU : std_logic_vector( 4 downto 0 ) := "00011";
+    constant ALU_SUB  : std_logic_vector( 4 downto 0 ) := "00110";
+    constant ALU_SLT  : std_logic_vector( 4 downto 0 ) := "00111";
     
-    constant ALU_XOR  : std_logic_vector( 3 downto 0 ) := "1000";
-    constant ALU_NOR  : std_logic_vector( 3 downto 0 ) := "1001";
-    constant ALU_SLL  : std_logic_vector( 3 downto 0 ) := "1010";
-    constant ALU_SRL  : std_logic_vector( 3 downto 0 ) := "1011";
-    constant ALU_SRA  : std_logic_vector( 3 downto 0 ) := "1100";
-    constant ALU_MULTU: std_logic_vector( 3 downto 0 ) := "1101";
-    constant ALU_SLL16: std_logic_vector( 3 downto 0 ) := "1110";
-    constant ALU_NULL : std_logic_vector( 3 downto 0 ) := "1111";
+    constant ALU_XOR  : std_logic_vector( 4 downto 0 ) := "01000";
+    constant ALU_NOR  : std_logic_vector( 4 downto 0 ) := "01001";
+    constant ALU_SLL  : std_logic_vector( 4 downto 0 ) := "01010";
+    constant ALU_SRL  : std_logic_vector( 4 downto 0 ) := "01011";
+    constant ALU_SRA  : std_logic_vector( 4 downto 0 ) := "01100";
+    constant ALU_MULTU: std_logic_vector( 4 downto 0 ) := "01101";
+    constant ALU_SLL16: std_logic_vector( 4 downto 0 ) := "01110";
+    constant ALU_NULL : std_logic_vector( 4 downto 0 ) := "01111";
+    
+    constant ALU_ADDV  : std_logic_vector( 4 downto 0 ) := "10000";
+    constant ALU_LWV   : std_logic_vector( 4 downto 0 ) := "10001";
+    constant ALU_SWV   : std_logic_vector( 4 downto 0 ) := "10010";
+    constant ALU_MOVNV : std_logic_vector( 4 downto 0 ) := "10011";
+    constant ALU_MINV  : std_logic_vector( 4 downto 0 ) := "10100";
     
     -- codes du champ function des instructions de type R
     -- Ces codes sont définis par l'encodage des instructions MIPS
@@ -67,7 +73,11 @@ package MIPS32_package is
     constant OP_LUI   : std_logic_vector( 5 downto 0 ) := "001111";
     constant OP_LW    : std_logic_vector( 5 downto 0 ) := "100011";
     constant OP_SW    : std_logic_vector( 5 downto 0 ) := "101011";
-	
+	constant OP_SWV   : std_logic_vector( 5 downto 0 ) := "111011"; --ENREGISTRE UN VECTEUR
+    constant OP_LWV   : std_logic_vector( 5 downto 0 ) := "111100"; --CHARGE UN VECTEUR
+    constant OP_ADDV  : std_logic_vector( 5 downto 0 ) := "111101"; --ADDITIONNE DES VECTEURS
+    constant OP_MOVNV : std_logic_vector( 5 downto 0 ) := "111110"; --DEPLACE LES VALEUR PAS EGALES A ZERO
+    constant OP_MINV  : std_logic_vector( 5 downto 0 ) := "111111"; --RECUPERE LA VALEUR LA PLUS PETITE D'UN VECTEUR
 	
 	constant c_Mips32_Nop	 	: std_logic_vector(31 downto 0) := X"00000000";
 	-- equivalent au c_Mips32_Nop, mais permet de mieux visualiser dans vivado

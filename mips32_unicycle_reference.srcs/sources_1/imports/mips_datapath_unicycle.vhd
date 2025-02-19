@@ -24,7 +24,7 @@ Port (
 	clk 			: in std_logic;
 	reset 			: in std_logic;
 
-	i_alu_funct   	: in std_logic_vector(3 downto 0);
+	i_alu_funct   	: in std_logic_vector(4 downto 0);
 	i_RegWrite    	: in std_logic;
 	i_RegDst      	: in std_logic;
 	i_MemtoReg    	: in std_logic;
@@ -84,7 +84,7 @@ end component;
 	Port ( 
 		i_a			: in std_logic_vector (31 downto 0);
 		i_b			: in std_logic_vector (31 downto 0);
-		i_alu_funct	: in std_logic_vector (3 downto 0);
+		i_alu_funct	: in std_logic_vector (4 downto 0);
 		i_shamt		: in std_logic_vector (4 downto 0);
 		o_result	: out std_logic_vector (31 downto 0);
 	    o_multRes    : out std_logic_vector (63 downto 0);

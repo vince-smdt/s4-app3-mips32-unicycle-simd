@@ -25,7 +25,7 @@ Port (
     o_RegDst    	: out std_logic;
     o_Branch    	: out std_logic;
     o_MemtoReg  	: out std_logic;
-    o_AluFunct  	: out std_logic_vector (3 downto 0);
+    o_AluFunct  	: out std_logic_vector (4 downto 0);
     o_MemRead   	: out std_logic;
     o_MemWrite  	: out std_logic;
     o_ALUSrc    	: out std_logic;
@@ -44,7 +44,7 @@ end controleur;
 
 architecture Behavioral of controleur is
 
-    signal s_R_funct_decode   : std_logic_vector(3 downto 0);
+    signal s_R_funct_decode   : std_logic_vector(4 downto 0);
 
 begin
 
@@ -73,6 +73,16 @@ begin
 				o_AluFunct <= ALU_ADD;
 			when OP_LW => 
 				o_AluFunct <= ALU_ADD;
+			when OP_LWV =>
+			    o_AluFunct <= ALU_LWV; --MODIFIER ALU_ADD
+			when OP_SWV =>
+			    o_AluFunct <= ALU_SWV; --MODIFIER ALU_ADD
+		    when OP_ADDV =>
+			    o_AluFunct <= ALU_ADDV; --MODIFIER ALU_ADD
+			when OP_MOVNV =>
+			    o_AluFunct <= ALU_MOVNV; --MODIFIER ALU_ADD
+			when OP_MINV =>
+			    o_AluFunct <= ALU_MINV; --MODIFIER ALU_ADD
             -- when OP_??? =>   -- autres cas?
 			-- sinon
             when others =>

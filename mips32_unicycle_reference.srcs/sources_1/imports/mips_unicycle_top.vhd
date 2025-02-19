@@ -38,7 +38,7 @@ Port (
     o_RegDst    : out std_logic;
     o_Branch    : out std_logic;
     o_MemtoReg  : out std_logic;
-    o_AluFunct  : out std_logic_vector (3 downto 0);
+    o_AluFunct  : out std_logic_vector (4 downto 0);
     o_MemRead   : out std_logic;
     o_MemWrite  : out std_logic;
     o_ALUSrc    : out std_logic;
@@ -60,7 +60,7 @@ Port (
 	clk 			: in std_logic;
 	reset 			: in std_logic;
 
-	i_alu_funct   	: in std_logic_vector(3 downto 0);
+	i_alu_funct   	: in std_logic_vector(4 downto 0);
 	i_RegWrite    	: in std_logic;
 	i_RegDst      	: in std_logic;
 	i_MemtoReg    	: in std_logic;
@@ -82,7 +82,7 @@ Port (
 );
 end component;
 
-    signal s_alu_funct      : std_logic_vector(3 downto 0);
+    signal s_alu_funct      : std_logic_vector(4 downto 0);
     signal s_RegWrite       : std_logic;
 	signal s_RegDst         : std_logic;
     signal s_MemtoReg       : std_logic;

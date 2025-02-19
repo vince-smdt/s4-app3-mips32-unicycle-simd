@@ -21,7 +21,7 @@ entity alu is
 Port ( 
 	i_a          : in std_logic_vector (31 downto 0);
 	i_b          : in std_logic_vector (31 downto 0);
-	i_alu_funct  : in std_logic_vector (3 downto 0);
+	i_alu_funct  : in std_logic_vector (4 downto 0);
 	i_shamt      : in std_logic_vector (4 downto 0);
 	o_result     : out std_logic_vector (31 downto 0);
 	o_multRes    : out std_logic_vector (63 downto 0);
@@ -76,6 +76,16 @@ begin
             when ALU_MULTU =>
                 s_multRes <= std_logic_vector(unsigned(i_a) * unsigned(i_b));
             when ALU_NULL => 
+				s_result <= (others => '0');
+			when ALU_ADDV => 
+				s_result <= (others => '0');
+			when ALU_SWV => 
+				s_result <= (others => '0');
+			when ALU_LWV => 
+				s_result <= (others => '0');
+			when ALU_MOVNV => 
+				s_result <= (others => '0');
+			when ALU_MINV => 
 				s_result <= (others => '0');
             when others =>
                 s_result <= i_a and i_b;
