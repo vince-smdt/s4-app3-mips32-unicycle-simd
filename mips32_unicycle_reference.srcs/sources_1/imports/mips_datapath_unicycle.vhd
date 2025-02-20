@@ -223,6 +223,18 @@ port map (
 	o_RS2_DAT    => s_reg_data2
 	);
 	
+inst_RegistresVectoriels: BancRegistresVectoriels
+port map (
+    clk          => clk,
+	reset        => reset,
+	i_RS1        => (others => '0'),
+	i_RS2        => (others => '0'),
+	i_Wr_DAT     => (others => '0'),
+	i_WDest      => (others => '0'),
+	i_WE         => '0',
+	o_RS1_DAT    => open,
+	o_RS2_DAT    => open
+    );
 
 ------------------------------------------------------------------------
 -- ALU (instance, extension de signe et mux d'entrée pour les immédiats)
