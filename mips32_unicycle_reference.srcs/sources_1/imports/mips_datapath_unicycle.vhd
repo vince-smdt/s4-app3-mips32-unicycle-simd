@@ -58,13 +58,21 @@ end component;
 
 component MemDonnees is
 Port ( 
-	clk : in std_logic;
-	reset : in std_logic;
+	clk 		: in std_logic;
+	reset 		: in std_logic;
 	i_MemRead 	: in std_logic;
-	i_MemWrite : in std_logic;
-    i_Addresse : in std_logic_vector (31 downto 0);
+	i_MemReadSIMD : in std_logic;
+	i_MemWrite 	: in std_logic;
+	i_MemWriteSIMD : in std_logic;
+    i_Addresse 	: in std_logic_vector (31 downto 0);
 	i_WriteData : in std_logic_vector (31 downto 0);
-    o_ReadData : out std_logic_vector (31 downto 0)
+	i_WriteData2 : in std_logic_vector (31 downto 0);
+	i_WriteData3 : in std_logic_vector (31 downto 0);
+	i_WriteData4 : in std_logic_vector (31 downto 0);
+    o_ReadData 	: out std_logic_vector (31 downto 0);
+    o_ReadData2 	: out std_logic_vector (31 downto 0);
+    o_ReadData3 	: out std_logic_vector (31 downto 0);
+    o_ReadData4 	: out std_logic_vector (31 downto 0)
 );
 end component;
 
@@ -132,7 +140,12 @@ end component;
     signal s_jump_field  : std_logic_vector(25 downto 0);
     signal s_reg_data1        : std_logic_vector(31 downto 0);
     signal s_reg_data2        : std_logic_vector(31 downto 0);
+    signal s_reg_v_data1      : std_logic_vector(127 downto 0);
+    signal s_reg_v_data2      : std_logic_vector(127 downto 0);
     signal s_AluResult             : std_logic_vector(31 downto 0);
+    signal s_AluResult2            : std_logic_vector(31 downto 0);
+    signal s_AluResult3            : std_logic_vector(31 downto 0);
+    signal s_AluResult4            : std_logic_vector(31 downto 0);
     signal s_AluMultResult          : std_logic_vector(63 downto 0);
     
     signal s_Data2Reg_muxout       : std_logic_vector(31 downto 0);
@@ -142,6 +155,9 @@ end component;
 	
     signal s_Reg_Wr_Data           : std_logic_vector(31 downto 0);
     signal s_MemoryReadData        : std_logic_vector(31 downto 0);
+    signal s_MemoryReadData2       : std_logic_vector(31 downto 0);
+    signal s_MemoryReadData3       : std_logic_vector(31 downto 0);
+    signal s_MemoryReadData4       : std_logic_vector(31 downto 0);
     signal s_AluB_data             : std_logic_vector(31 downto 0);
     
     -- registres spéciaux pour la multiplication
@@ -238,13 +254,13 @@ inst_RegistresVectoriels: BancRegistresVectoriels
 port map (
     clk          => clk,
 	reset        => reset,
-	i_RS1        => (others => '0'),
-	i_RS2        => (others => '0'),
-	i_Wr_DAT     => (others => '0'),
-	i_WDest      => (others => '0'),
+	i_RS1        => s_rs,
+	i_RS2        => s_rt,
+	i_Wr_DAT     => s_AluResult4 & s_AluResult3 & s_AluResult2 & s_AluResult,
+	i_WDest      => s_rd,
 	i_WE         => '0',
-	o_RS1_DAT    => open,
-	o_RS2_DAT    => open
+	o_RS1_DAT    => s_reg_v_data1,
+	o_RS2_DAT    => s_reg_v_data2
     );
 
 ------------------------------------------------------------------------
@@ -262,15 +278,15 @@ s_IsVec <= '1' when i_Op = "11" else '0';
 process (s_IsVec, clk)
 begin
     if s_IsVec = '1' then
-        s_a1 <= s_reg_data1 (127 downto 96);
-        s_a2 <= s_reg_data1 (95 downto 64);
-        s_a3 <= s_reg_data1 (63 downto 32);
-        s_a4 <= s_reg_data1 (31 downto 0); 
+        s_a1 <= s_reg_v_data1 (31 downto 0);
+        s_a2 <= s_reg_v_data1 (63 downto 32);
+        s_a3 <= s_reg_v_data1 (95 downto 64);
+        s_a4 <= s_reg_v_data1 (127 downto 96); 
         
-        s_b1 <= s_AluB_data (127 downto 96);
-        s_b2 <= s_AluB_data (95 downto 64);
-        s_b3 <= s_AluB_data (63 downto 32);
-        s_b4 <= s_AluB_data (31 downto 0); 
+        s_b1 <= s_reg_v_data2 (31 downto 0);
+        s_b2 <= s_reg_v_data2 (63 downto 32);
+        s_b3 <= s_reg_v_data2 (95 downto 64);
+        s_b4 <= s_reg_v_data2 (127 downto 96);
     else
         s_a1 <= s_reg_data1;
         s_a2 <= (others => '0');
@@ -303,9 +319,7 @@ port map(
 	i_alu_funct => i_alu_funct,
 	i_shamt     => s_shamt,
 	i_isVec     => s_IsVec,
-	o_result    => s_AluResult,
-	o_multRes   => s_AluMultResult,
-	o_zero      => s_zero
+	o_result    => s_AluResult2
 	);
 	
 inst_Alu3: alu 
@@ -315,9 +329,7 @@ port map(
 	i_alu_funct => i_alu_funct,
 	i_shamt     => s_shamt,
 	i_isVec     => s_IsVec,
-	o_result    => s_AluResult,
-	o_multRes   => s_AluMultResult,
-	o_zero      => s_zero
+	o_result    => s_AluResult3
 	);
 	
 inst_Alu4: alu 
@@ -327,9 +339,7 @@ port map(
 	i_alu_funct => i_alu_funct,
 	i_shamt     => s_shamt,
 	i_isVec     => s_IsVec,
-	o_result    => s_AluResult,
-	o_multRes   => s_AluMultResult,
-	o_zero      => s_zero
+	o_result    => s_AluResult4
 	);
 
 ------------------------------------------------------------------------
@@ -337,13 +347,21 @@ port map(
 ------------------------------------------------------------------------
 inst_MemDonnees : MemDonnees
 Port map( 
-	clk 		=> clk,
-	reset 		=> reset,
-	i_MemRead	=> i_MemRead,
-	i_MemWrite	=> i_MemWrite,
-    i_Addresse	=> s_AluResult,
-	i_WriteData => s_reg_data2,
-    o_ReadData	=> s_MemoryReadData
+	clk 		     => clk,
+	reset 		     => reset,
+	i_MemRead	     => i_MemRead,
+	i_MemReadSIMD    => '0',
+	i_MemWrite	     => i_MemWrite,
+	i_MemWriteSIMD   => '0',
+    i_Addresse	     => s_AluResult,
+	i_WriteData      => s_reg_data2,
+	i_WriteData2     => s_reg_v_data2(63 downto 32),
+	i_WriteData3     => s_reg_v_data2(95 downto 64),
+	i_WriteData4     => s_reg_v_data2(127 downto 96),	
+    o_ReadData	     => s_MemoryReadData,
+    o_ReadData2	     => s_MemoryReadData2,
+    o_ReadData3	     => s_MemoryReadData3,
+    o_ReadData4	     => s_MemoryReadData4
 	);
 	
 
