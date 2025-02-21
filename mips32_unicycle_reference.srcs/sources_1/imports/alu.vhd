@@ -23,6 +23,7 @@ Port (
 	i_b          : in std_logic_vector (31 downto 0);
 	i_alu_funct  : in std_logic_vector (4 downto 0);
 	i_shamt      : in std_logic_vector (4 downto 0);
+	i_isVec      : in std_logic;
 	o_result     : out std_logic_vector (31 downto 0);
 	o_multRes    : out std_logic_vector (63 downto 0);
 	o_zero       : out std_logic

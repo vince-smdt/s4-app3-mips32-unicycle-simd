@@ -40,6 +40,8 @@ Port (
 	i_mflo          : in std_logic;
 	i_mfhi          : in std_logic;
 	i_SignExtend 	: in std_logic;
+	
+	i_Op            : in std_logic_vector (1 downto 0);
 
 	o_Instruction 	: out std_logic_vector (31 downto 0);
 	o_PC		 	: out std_logic_vector (31 downto 0)
@@ -100,6 +102,7 @@ end component;
 		i_b			: in std_logic_vector (31 downto 0);
 		i_alu_funct	: in std_logic_vector (4 downto 0);
 		i_shamt		: in std_logic_vector (4 downto 0);
+		i_IsVec     : in std_logic;
 		o_result	: out std_logic_vector (31 downto 0);
 	    o_multRes    : out std_logic_vector (63 downto 0);
 		o_zero		: out std_logic
@@ -145,7 +148,15 @@ end component;
     signal r_HI             : std_logic_vector(31 downto 0);
     signal r_LO             : std_logic_vector(31 downto 0);
 	
-
+    signal s_IsVec          : std_logic;
+    signal s_a1             : std_logic_vector (31 downto 0);
+    signal s_b1             : std_logic_vector (31 downto 0);
+    signal s_a2             : std_logic_vector (31 downto 0);
+    signal s_b2             : std_logic_vector (31 downto 0);
+    signal s_a3             : std_logic_vector (31 downto 0);
+    signal s_b3             : std_logic_vector (31 downto 0);
+    signal s_a4             : std_logic_vector (31 downto 0);
+    signal s_b4             : std_logic_vector (31 downto 0);
 begin
 
 o_PC	<= r_PC; -- permet au synthétiseur de sortir de la logique. Sinon, il enlève tout...
@@ -234,12 +245,76 @@ s_imm_extended <= std_logic_vector(resize(  signed(s_imm16),32)) when i_SignExte
 -- Mux pour immédiats
 s_AluB_data <= s_reg_data2 when i_ALUSrc = '0' else s_imm_extended;
 
+s_IsVec <= '1' when i_Op = "11" else '0';
+
+process (s_IsVec, clk)
+begin
+    if s_IsVec = '1' then
+        s_a1 <= s_reg_data1 (127 downto 96);
+        s_a2 <= s_reg_data1 (95 downto 64);
+        s_a3 <= s_reg_data1 (63 downto 32);
+        s_a4 <= s_reg_data1 (31 downto 0); 
+        
+        s_b1 <= s_AluB_data (127 downto 96);
+        s_b2 <= s_AluB_data (95 downto 64);
+        s_b3 <= s_AluB_data (63 downto 32);
+        s_b4 <= s_AluB_data (31 downto 0); 
+    else
+        s_a1 <= s_reg_data1;
+        s_a2 <= (others => '0');
+        s_a3 <= (others => '0');
+        s_a4 <= (others => '0'); 
+        
+        s_b1 <= s_AluB_data;
+        s_b2 <= (others => '0');
+        s_b3 <= (others => '0');
+        s_b4 <= (others => '0'); 
+    end if;
+end process;
+
 inst_Alu: alu 
 port map( 
-	i_a         => s_reg_data1,
-	i_b         => s_AluB_data,
+	i_a         => s_a1,
+	i_b         => s_b1,
 	i_alu_funct => i_alu_funct,
 	i_shamt     => s_shamt,
+	i_isVec     => s_IsVec,
+	o_result    => s_AluResult,
+	o_multRes   => s_AluMultResult,
+	o_zero      => s_zero
+	);
+	
+inst_Alu2: alu 
+port map( 
+	i_a         => s_a2,
+	i_b         => s_b2,
+	i_alu_funct => i_alu_funct,
+	i_shamt     => s_shamt,
+	i_isVec     => s_IsVec,
+	o_result    => s_AluResult,
+	o_multRes   => s_AluMultResult,
+	o_zero      => s_zero
+	);
+	
+inst_Alu3: alu 
+port map( 
+	i_a         => s_a3,
+	i_b         => s_b3,
+	i_alu_funct => i_alu_funct,
+	i_shamt     => s_shamt,
+	i_isVec     => s_IsVec,
+	o_result    => s_AluResult,
+	o_multRes   => s_AluMultResult,
+	o_zero      => s_zero
+	);
+	
+inst_Alu4: alu 
+port map( 
+	i_a         => s_a4,
+	i_b         => s_b4,
+	i_alu_funct => i_alu_funct,
+	i_shamt     => s_shamt,
+	i_isVec     => s_IsVec,
 	o_result    => s_AluResult,
 	o_multRes   => s_AluMultResult,
 	o_zero      => s_zero
