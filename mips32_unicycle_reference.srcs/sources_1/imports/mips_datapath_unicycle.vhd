@@ -148,7 +148,8 @@ end component;
     signal s_AluMultResult          : std_logic_vector(63 downto 0);
     
     signal s_Data2Reg_muxout       : std_logic_vector(31 downto 0);
-    
+    signal s_Data2RegVec_muxout    : std_logic_vector(127 downto 0);
+
     signal s_imm_extended          : std_logic_vector(31 downto 0);
     signal s_imm_extended_shifted  : std_logic_vector(31 downto 0);
 	
@@ -172,6 +173,9 @@ end component;
     signal s_b3             : std_logic_vector (31 downto 0);
     signal s_a4             : std_logic_vector (31 downto 0);
     signal s_b4             : std_logic_vector (31 downto 0);
+
+    signal s_RegWrite       : std_logic;
+    signal s_RegWriteSIMD   : std_logic;
 begin
 
 o_PC	<= r_PC; -- permet au synth�tiseur de sortir de la logique. Sinon, il enl�ve tout...
@@ -235,7 +239,10 @@ o_instruction <= s_Instruction;
 s_WriteRegDest_muxout <= c_Registre31 when i_jump_link = '1' else 
                          s_rt         when i_RegDst = '0' else 
 						 s_rd;
-       
+
+s_RegWrite <= '1' when i_RegWrite = '1' and s_IsVec = '0' else '0';
+s_RegWriteSIMD <= '1' when i_RegWrite = '1' and s_IsVec = '1' else '0';
+
 inst_Registres: BancRegistres 
 port map ( 
 	clk          => clk,
@@ -244,7 +251,7 @@ port map (
 	i_RS2        => s_rt,
 	i_Wr_DAT     => s_Data2Reg_muxout,
 	i_WDest      => s_WriteRegDest_muxout,
-	i_WE         => i_RegWrite,
+	i_WE         => s_RegWrite,
 	o_RS1_DAT    => s_reg_data1,
 	o_RS2_DAT    => s_reg_data2
 	);
@@ -255,9 +262,9 @@ port map (
 	reset        => reset,
 	i_RS1        => s_rs,
 	i_RS2        => s_rt,
-	i_Wr_DAT     => s_AluResult4 & s_AluResult3 & s_AluResult2 & s_AluResult,
+	i_Wr_DAT     => s_Data2RegVec_muxout,
 	i_WDest      => s_rd,
-	i_WE         => '0',
+	i_WE         => s_RegWriteSIMD,
 	o_RS1_DAT    => s_reg_v_data1,
 	o_RS2_DAT    => s_reg_v_data2
     );
@@ -276,7 +283,7 @@ s_IsVec <= '1' when i_Op = "11" else '0';
 
 process (s_IsVec, i_Op, clk)
 begin
-    if i_Op = "11" then
+    if s_IsVec = '1' and s_opcode /= OP_LWV then
         s_a1 <= s_reg_v_data1 (127 downto 96);
         s_a2 <= s_reg_v_data1 (95 downto 64);
         s_a3 <= s_reg_v_data1 (63 downto 32);
@@ -305,7 +312,7 @@ begin
         s_b1 <= s_AluB_data;
         s_b2 <= (others => '0');
         s_b3 <= (others => '0');
-        s_b4 <= (others => '0'); 
+        s_b4 <= (others => '0');
     end if;
 end process;
 
@@ -384,7 +391,8 @@ s_Data2Reg_muxout    <= s_adresse_PC_plus_4 when i_jump_link = '1' else
 					    s_AluResult         when i_MemtoReg = '0' else 
 						s_MemoryReadData;
 
-
+s_Data2RegVec_muxout <= s_AluResult4 & s_AluResult3 & s_AluResult2 & s_AluResult when i_MemtoReg = '0' else
+                        s_MemoryReadData4 & s_MemoryReadData3 & s_MemoryReadData2 & s_MemoryReadData;
 		
 ------------------------------------------------------------------------
 -- Registres sp�ciaux pour la multiplication

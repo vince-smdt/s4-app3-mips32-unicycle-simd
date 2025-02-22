@@ -35,7 +35,7 @@ begin
     process( clk )
     begin
         if clk='1' and clk'event then
-            if i_WE = '1' and reset = '0' and i_WDest /= "00000" then
+            if i_WE = '1' and reset = '0' then
                 regs( to_integer( unsigned(i_WDest))) <= i_Wr_DAT;
             end if;
         end if;
