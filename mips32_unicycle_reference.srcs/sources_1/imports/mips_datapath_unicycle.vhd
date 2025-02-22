@@ -1,14 +1,14 @@
 ---------------------------------------------------------------------------------------------
 --
---	Université de Sherbrooke 
---  Département de génie électrique et génie informatique
+--	Universitï¿½ de Sherbrooke 
+--  Dï¿½partement de gï¿½nie ï¿½lectrique et gï¿½nie informatique
 --
 --	S4i - APP4 
 --	
 --
---	Auteurs: 		Marc-André Tétrault
+--	Auteurs: 		Marc-Andrï¿½ Tï¿½trault
 --					Daniel Dalle
---					Sébastien Roy
+--					Sï¿½bastien Roy
 -- 
 ---------------------------------------------------------------------------------------------
 
@@ -58,13 +58,21 @@ end component;
 
 component MemDonnees is
 Port ( 
-	clk : in std_logic;
-	reset : in std_logic;
+	clk 		: in std_logic;
+	reset 		: in std_logic;
 	i_MemRead 	: in std_logic;
-	i_MemWrite : in std_logic;
-    i_Addresse : in std_logic_vector (31 downto 0);
+	i_MemReadSIMD : in std_logic;
+	i_MemWrite 	: in std_logic;
+	i_MemWriteSIMD : in std_logic;
+    i_Addresse 	: in std_logic_vector (31 downto 0);
 	i_WriteData : in std_logic_vector (31 downto 0);
-    o_ReadData : out std_logic_vector (31 downto 0)
+	i_WriteData2 : in std_logic_vector (31 downto 0);
+	i_WriteData3 : in std_logic_vector (31 downto 0);
+	i_WriteData4 : in std_logic_vector (31 downto 0);
+    o_ReadData 	: out std_logic_vector (31 downto 0);
+    o_ReadData2 	: out std_logic_vector (31 downto 0);
+    o_ReadData3 	: out std_logic_vector (31 downto 0);
+    o_ReadData4 	: out std_logic_vector (31 downto 0)
 );
 end component;
 
@@ -132,7 +140,12 @@ end component;
     signal s_jump_field  : std_logic_vector(25 downto 0);
     signal s_reg_data1        : std_logic_vector(31 downto 0);
     signal s_reg_data2        : std_logic_vector(31 downto 0);
+    signal s_reg_v_data1      : std_logic_vector(127 downto 0);
+    signal s_reg_v_data2      : std_logic_vector(127 downto 0);
     signal s_AluResult             : std_logic_vector(31 downto 0);
+    signal s_AluResult2            : std_logic_vector(31 downto 0);
+    signal s_AluResult3            : std_logic_vector(31 downto 0);
+    signal s_AluResult4            : std_logic_vector(31 downto 0);
     signal s_AluMultResult          : std_logic_vector(63 downto 0);
     
     signal s_Data2Reg_muxout       : std_logic_vector(31 downto 0);
@@ -142,9 +155,12 @@ end component;
 	
     signal s_Reg_Wr_Data           : std_logic_vector(31 downto 0);
     signal s_MemoryReadData        : std_logic_vector(31 downto 0);
+    signal s_MemoryReadData2       : std_logic_vector(31 downto 0);
+    signal s_MemoryReadData3       : std_logic_vector(31 downto 0);
+    signal s_MemoryReadData4       : std_logic_vector(31 downto 0);
     signal s_AluB_data             : std_logic_vector(31 downto 0);
     
-    -- registres spéciaux pour la multiplication
+    -- registres spï¿½ciaux pour la multiplication
     signal r_HI             : std_logic_vector(31 downto 0);
     signal r_LO             : std_logic_vector(31 downto 0);
 	
@@ -159,7 +175,7 @@ end component;
     signal s_b4             : std_logic_vector (31 downto 0);
 begin
 
-o_PC	<= r_PC; -- permet au synthétiseur de sortir de la logique. Sinon, il enlève tout...
+o_PC	<= r_PC; -- permet au synthï¿½tiseur de sortir de la logique. Sinon, il enlï¿½ve tout...
 
 ------------------------------------------------------------------------
 -- simplification des noms de signaux et transformation des types
@@ -176,7 +192,7 @@ s_jump_field	<= s_Instruction(25 downto  0);
 
 
 ------------------------------------------------------------------------
--- Compteur de programme et mise à jour de valeur
+-- Compteur de programme et mise ï¿½ jour de valeur
 ------------------------------------------------------------------------
 process(clk)
 begin
@@ -202,7 +218,7 @@ s_PC_Suivant		<= s_adresse_jump when i_jump = '1' else
 					   
 
 ------------------------------------------------------------------------
--- Mémoire d'instructions
+-- Mï¿½moire d'instructions
 ------------------------------------------------------------------------
 inst_MemInstr: MemInstructions
 Port map ( 
@@ -210,13 +226,13 @@ Port map (
     o_instruction => s_Instruction
     );
 
--- branchement vers le décodeur d'instructions
+-- branchement vers le dï¿½codeur d'instructions
 o_instruction <= s_Instruction;
 	
 ------------------------------------------------------------------------
 -- Banc de Registres
 ------------------------------------------------------------------------
--- Multiplexeur pour le registre en écriture
+-- Multiplexeur pour le registre en ï¿½criture
 s_WriteRegDest_muxout <= c_Registre31 when i_jump_link = '1' else 
                          s_rt         when i_RegDst = '0' else 
 						 s_rd;
@@ -238,23 +254,23 @@ inst_RegistresVectoriels: BancRegistresVectoriels
 port map (
     clk          => clk,
 	reset        => reset,
-	i_RS1        => (others => '0'),
-	i_RS2        => (others => '0'),
-	i_Wr_DAT     => (others => '0'),
-	i_WDest      => (others => '0'),
+	i_RS1        => s_rs,
+	i_RS2        => s_rt,
+	i_Wr_DAT     => s_AluResult4 & s_AluResult3 & s_AluResult2 & s_AluResult,
+	i_WDest      => s_rd,
 	i_WE         => '0',
-	o_RS1_DAT    => open,
-	o_RS2_DAT    => open
+	o_RS1_DAT    => s_reg_v_data1,
+	o_RS2_DAT    => s_reg_v_data2
     );
 
 ------------------------------------------------------------------------
--- ALU (instance, extension de signe et mux d'entrée pour les immédiats)
+-- ALU (instance, extension de signe et mux d'entrï¿½e pour les immï¿½diats)
 ------------------------------------------------------------------------
 -- extension de signe
-s_imm_extended <= std_logic_vector(resize(  signed(s_imm16),32)) when i_SignExtend = '1' else -- extension de signe à 32 bits
+s_imm_extended <= std_logic_vector(resize(  signed(s_imm16),32)) when i_SignExtend = '1' else -- extension de signe ï¿½ 32 bits
 				  std_logic_vector(resize(unsigned(s_imm16),32)); 
 
--- Mux pour immédiats
+-- Mux pour immï¿½diats
 s_AluB_data <= s_reg_data2 when i_ALUSrc = '0' else s_imm_extended;
 
 s_IsVec <= '1' when i_Op = "11" else '0';
@@ -313,9 +329,7 @@ port map(
 	i_alu_funct => i_alu_funct,
 	i_shamt     => s_shamt,
 	i_isVec     => s_IsVec,
-	o_result    => s_AluResult,
-	o_multRes   => s_AluMultResult,
-	o_zero      => s_zero
+	o_result    => s_AluResult2
 	);
 	
 inst_Alu3: alu 
@@ -325,9 +339,7 @@ port map(
 	i_alu_funct => i_alu_funct,
 	i_shamt     => s_shamt,
 	i_isVec     => s_IsVec,
-	o_result    => s_AluResult,
-	o_multRes   => s_AluMultResult,
-	o_zero      => s_zero
+	o_result    => s_AluResult3
 	);
 	
 inst_Alu4: alu 
@@ -337,28 +349,34 @@ port map(
 	i_alu_funct => i_alu_funct,
 	i_shamt     => s_shamt,
 	i_isVec     => s_IsVec,
-	o_result    => s_AluResult,
-	o_multRes   => s_AluMultResult,
-	o_zero      => s_zero
+	o_result    => s_AluResult4
 	);
 
 ------------------------------------------------------------------------
--- Mémoire de données
+-- Mï¿½moire de donnï¿½es
 ------------------------------------------------------------------------
 inst_MemDonnees : MemDonnees
 Port map( 
-	clk 		=> clk,
-	reset 		=> reset,
-	i_MemRead	=> i_MemRead,
-	i_MemWrite	=> i_MemWrite,
-    i_Addresse	=> s_AluResult,
-	i_WriteData => s_reg_data2,
-    o_ReadData	=> s_MemoryReadData
+	clk 		     => clk,
+	reset 		     => reset,
+	i_MemRead	     => i_MemRead,
+	i_MemReadSIMD    => '0',
+	i_MemWrite	     => i_MemWrite,
+	i_MemWriteSIMD   => '0',
+    i_Addresse	     => s_AluResult,
+	i_WriteData      => s_reg_data2,
+	i_WriteData2     => s_reg_v_data2(63 downto 32),
+	i_WriteData3     => s_reg_v_data2(95 downto 64),
+	i_WriteData4     => s_reg_v_data2(127 downto 96),	
+    o_ReadData	     => s_MemoryReadData,
+    o_ReadData2	     => s_MemoryReadData2,
+    o_ReadData3	     => s_MemoryReadData3,
+    o_ReadData4	     => s_MemoryReadData4
 	);
 	
 
 ------------------------------------------------------------------------
--- Mux d'écriture vers le banc de registres
+-- Mux d'ï¿½criture vers le banc de registres
 ------------------------------------------------------------------------
 
 s_Data2Reg_muxout    <= s_adresse_PC_plus_4 when i_jump_link = '1' else
@@ -370,7 +388,7 @@ s_Data2Reg_muxout    <= s_adresse_PC_plus_4 when i_jump_link = '1' else
 
 		
 ------------------------------------------------------------------------
--- Registres spéciaux pour la multiplication
+-- Registres spï¿½ciaux pour la multiplication
 ------------------------------------------------------------------------				
 process(clk)
 begin
