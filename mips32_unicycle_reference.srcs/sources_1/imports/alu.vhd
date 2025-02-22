@@ -78,8 +78,6 @@ begin
                 s_multRes <= std_logic_vector(unsigned(i_a) * unsigned(i_b));
             when ALU_NULL => 
 				s_result <= (others => '0');
-			when ALU_ADDV => 
-				s_result <= (others => '0');
 			when ALU_SWV => 
 				s_result <= (others => '0');
 			when ALU_LWV => 
