@@ -79,8 +79,8 @@ begin
 			    o_AluFunct <= ALU_LWV; --MODIFIER ALU_ADD
 			when OP_SWV =>
 			    o_AluFunct <= ALU_SWV; --MODIFIER ALU_ADD
-		    when OP_ADDV =>
-			    o_AluFunct <= ALU_ADDV; --MODIFIER ALU_ADD
+		    when OP_ADDVS =>
+			    o_AluFunct <= ALU_ADDVS; --MODIFIER ALU_ADD
 			when OP_MOVNV =>
 			    o_AluFunct <= ALU_MOVNV; --MODIFIER ALU_ADD
 			when OP_MINV =>
