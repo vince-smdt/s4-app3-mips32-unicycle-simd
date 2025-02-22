@@ -80,7 +80,7 @@ begin
 			when OP_SWV =>
 			    o_AluFunct <= ALU_SWV; --MODIFIER ALU_ADD
 		    when OP_ADDVS =>
-			    o_AluFunct <= ALU_ADDVS; --MODIFIER ALU_ADD
+			    o_AluFunct <= ALU_ADD; --MODIFIER ALU_ADD
 			when OP_MOVNV =>
 			    o_AluFunct <= ALU_MOVNV; --MODIFIER ALU_ADD
 			when OP_MINV =>
