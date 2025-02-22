@@ -32,6 +32,7 @@ architecture Behavioral of MemInstructions is
 ------------------------
 --  TestMirroir
 X"20100024",
+X"EC220000",
 X"3c011001",
 X"00300821",
 X"8c240000",

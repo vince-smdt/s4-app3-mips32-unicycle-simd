@@ -277,20 +277,20 @@ s_IsVec <= '1' when i_Op = "11" else '0';
 process (s_IsVec, i_Op, clk)
 begin
     if i_Op = "11" then
-        s_a1 <= s_reg_data1 (127 downto 96);
-        s_a2 <= s_reg_data1 (95 downto 64);
-        s_a3 <= s_reg_data1 (63 downto 32);
-        s_a4 <= s_reg_data1 (31 downto 0); 
+        s_a1 <= s_reg_v_data1 (127 downto 96);
+        s_a2 <= s_reg_v_data1 (95 downto 64);
+        s_a3 <= s_reg_v_data1 (63 downto 32);
+        s_a4 <= s_reg_v_data1 (31 downto 0);
         
-        s_b1 <= s_AluB_data (127 downto 96);
-        s_b2 <= s_AluB_data (95 downto 64);
-        s_b3 <= s_AluB_data (63 downto 32);
-        s_b4 <= s_AluB_data (31 downto 0); 
+        s_b1 <= s_reg_v_data2 (127 downto 96);
+        s_b2 <= s_reg_v_data2 (95 downto 64);
+        s_b3 <= s_reg_v_data2 (63 downto 32);
+        s_b4 <= s_reg_v_data2 (31 downto 0);
     elsif i_Op = "01" then
-        s_a1 <= s_reg_data1 (127 downto 96);
-        s_a2 <= s_reg_data1 (95 downto 64);
-        s_a3 <= s_reg_data1 (63 downto 32);
-        s_a4 <= s_reg_data1 (31 downto 0); 
+        s_a1 <= s_reg_v_data1 (127 downto 96);
+        s_a2 <= s_reg_v_data1 (95 downto 64);
+        s_a3 <= s_reg_v_data1 (63 downto 32);
+        s_a4 <= s_reg_v_data1 (31 downto 0);
         
         s_b1 <= s_AluB_data;
         s_b2 <= s_AluB_data;

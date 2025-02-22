@@ -114,6 +114,8 @@ package MIPS32_package is
         sim_OP_LUI,
 		sim_OP_LW,
 		sim_OP_SW,
+		sim_OP_LWV,
+		sim_OP_SWV,
 		sim_OP_SYSCALL,
         sim_OP_Undefined
     );
@@ -217,6 +219,10 @@ begin
 			CurrentOp := sim_OP_LW;
 		when OP_SW =>
 			CurrentOp := sim_OP_SW;
+        when OP_LWV =>
+            CurrentOp := sim_OP_LWV;
+        when OP_SWV =>
+            CurrentOp := SIM_OP_SWV;
 		when others =>
 			CurrentOp := sim_OP_Undefined;
 	end case;
