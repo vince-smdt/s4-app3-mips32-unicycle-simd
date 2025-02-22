@@ -76,15 +76,13 @@ begin
 			when OP_LW => 
 				o_AluFunct <= ALU_ADD;
 			when OP_LWV =>
-			    o_AluFunct <= ALU_LWV; --MODIFIER ALU_ADD
+			    o_AluFunct <= ALU_ADD; --MODIFIER ALU_ADD
 			when OP_SWV =>
-			    o_AluFunct <= ALU_SWV; --MODIFIER ALU_ADD
+			    o_AluFunct <= ALU_ADD; --MODIFIER ALU_ADD
 		    when OP_ADDVS =>
 			    o_AluFunct <= ALU_ADD; --MODIFIER ALU_ADD
 			when OP_MOVNV =>
 			    o_AluFunct <= ALU_MOVNV; --MODIFIER ALU_ADD
-			when OP_MINV =>
-			    o_AluFunct <= ALU_MINV; --MODIFIER ALU_ADD
             -- when OP_??? =>   -- autres cas?
 			-- sinon
             when others =>
