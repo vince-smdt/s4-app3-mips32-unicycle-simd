@@ -35,11 +35,11 @@ package MIPS32_package is
     constant ALU_SLL16: std_logic_vector( 4 downto 0 ) := "01110";
     constant ALU_NULL : std_logic_vector( 4 downto 0 ) := "01111";
     
-    constant ALU_ADDV  : std_logic_vector( 4 downto 0 ) := "10000";
-    constant ALU_LWV   : std_logic_vector( 4 downto 0 ) := "10001";
-    constant ALU_SWV   : std_logic_vector( 4 downto 0 ) := "10010";
-    constant ALU_MOVNV : std_logic_vector( 4 downto 0 ) := "10011";
-    constant ALU_MINV  : std_logic_vector( 4 downto 0 ) := "10100";
+    constant ALU_ADDVS  : std_logic_vector( 4 downto 0 ):= "10000";
+    constant ALU_LWV   : std_logic_vector( 4 downto 0 ) := "11001";
+    constant ALU_SWV   : std_logic_vector( 4 downto 0 ) := "11010";
+    constant ALU_MOVNV : std_logic_vector( 4 downto 0 ) := "11011";
+    constant ALU_MINV  : std_logic_vector( 4 downto 0 ) := "11100";
     
     -- codes du champ function des instructions de type R
     -- Ces codes sont définis par l'encodage des instructions MIPS
@@ -75,7 +75,7 @@ package MIPS32_package is
     constant OP_SW    : std_logic_vector( 5 downto 0 ) := "101011";
 	constant OP_SWV   : std_logic_vector( 5 downto 0 ) := "111011"; --ENREGISTRE UN VECTEUR
     constant OP_LWV   : std_logic_vector( 5 downto 0 ) := "111100"; --CHARGE UN VECTEUR
-    constant OP_ADDV  : std_logic_vector( 5 downto 0 ) := "111101"; --ADDITIONNE DES VECTEURS
+    constant OP_ADDVS : std_logic_vector( 5 downto 0 ) := "011101"; --ADDITIONNE UN VECTEUR ET UN SCALAIRE
     constant OP_MOVNV : std_logic_vector( 5 downto 0 ) := "111110"; --DEPLACE LES VALEUR PAS EGALES A ZERO
     constant OP_MINV  : std_logic_vector( 5 downto 0 ) := "111111"; --RECUPERE LA VALEUR LA PLUS PETITE D'UN VECTEUR
 	
