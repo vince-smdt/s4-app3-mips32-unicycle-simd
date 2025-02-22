@@ -23,9 +23,8 @@ Port (
 	clk 		: in std_logic;
 	reset 		: in std_logic;
 	i_MemRead 	: in std_logic;
-	i_MemReadSIMD : in std_logic;
 	i_MemWrite 	: in std_logic;
-	i_MemWriteSIMD : in std_logic;
+	i_SIMD      : in std_logic;
     i_Addresse 	: in std_logic_vector (31 downto 0);
 	i_WriteData : in std_logic_vector (31 downto 0);
 	i_WriteData2 : in std_logic_vector (31 downto 0);
@@ -73,11 +72,9 @@ begin
 	process( clk )
     begin
         if clk='1' and clk'event then
-            if reset = '0' and s_MemoryRangeValid = '1' then
-                if i_MemWrite = '1' and i_MemWriteSIMD = '0' then
-                    ram_DataMemory(s_MemoryIndex) <= i_WriteData;
-                elsif i_MemWrite = '0' and i_MemWriteSIMD = '1' then
-                    ram_DataMemory(s_MemoryIndex) <= i_WriteData;
+            if reset = '0' and s_MemoryRangeValid = '1' and i_MemWrite = '1' then
+                ram_DataMemory(s_MemoryIndex) <= i_WriteData;
+                if i_SIMD = '1' then
                     ram_DataMemory(s_MemoryIndex+1) <= i_WriteData2;
                     ram_DataMemory(s_MemoryIndex+2) <= i_WriteData3;
                     ram_DataMemory(s_MemoryIndex+3) <= i_WriteData4;
@@ -87,16 +84,16 @@ begin
     end process;
 
     -- Valider que nous sommes dans le segment de mémoire, avec 256 addresses valides
-    o_ReadData <= ram_DataMemory(s_MemoryIndex) when (s_MemoryRangeValid = '1' and (i_MemRead = '1' xor i_MemReadSIMD = '1'))
+    o_ReadData <= ram_DataMemory(s_MemoryIndex) when (s_MemoryRangeValid = '1' and i_MemRead = '1')
                     else (others => '0');
 
-    o_ReadData2 <= ram_DataMemory(s_MemoryIndex+1) when (s_MemoryRangeValidSIMD = '1' and i_MemRead = '0' and i_MemReadSIMD = '1')
+    o_ReadData2 <= ram_DataMemory(s_MemoryIndex+1) when (s_MemoryRangeValidSIMD = '1' and i_MemRead = '1' and i_SIMD = '1')
                     else (others => '0');
 
-    o_ReadData3 <= ram_DataMemory(s_MemoryIndex+2) when (s_MemoryRangeValidSIMD = '1' and i_MemRead = '0' and i_MemReadSIMD = '1')
+    o_ReadData3 <= ram_DataMemory(s_MemoryIndex+2) when (s_MemoryRangeValidSIMD = '1' and i_MemRead = '1' and i_SIMD = '1')
                     else (others => '0');
 
-    o_ReadData4 <= ram_DataMemory(s_MemoryIndex+3) when (s_MemoryRangeValidSIMD = '1' and i_MemRead = '0' and i_MemReadSIMD = '1')
+    o_ReadData4 <= ram_DataMemory(s_MemoryIndex+3) when (s_MemoryRangeValidSIMD = '1' and i_MemRead = '1' and i_SIMD = '1')
                     else (others => '0');
 
 end Behavioral;

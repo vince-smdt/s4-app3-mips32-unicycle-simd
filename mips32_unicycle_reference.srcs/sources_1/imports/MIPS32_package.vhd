@@ -136,7 +136,7 @@ package MIPS32_package is
         sim_alu_NULL,
         sim_alu_Undefined
     );
-	function f_DisplayAluAction(alu_funct : std_logic_vector( 3 downto 0 )
+	function f_DisplayAluAction(alu_funct : std_logic_vector( 4 downto 0 )
                         ) return alu_action_types;			
 
 
@@ -225,7 +225,7 @@ begin
 end function;
 
 
-function f_DisplayAluAction(alu_funct : std_logic_vector( 3 downto 0 )
+function f_DisplayAluAction(alu_funct : std_logic_vector( 4 downto 0 )
                         ) return alu_action_types is 
 	variable CurrentAction : alu_action_types;	
 begin

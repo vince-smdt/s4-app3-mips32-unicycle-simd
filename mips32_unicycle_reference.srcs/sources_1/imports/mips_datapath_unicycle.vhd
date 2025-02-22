@@ -61,9 +61,8 @@ Port (
 	clk 		: in std_logic;
 	reset 		: in std_logic;
 	i_MemRead 	: in std_logic;
-	i_MemReadSIMD : in std_logic;
 	i_MemWrite 	: in std_logic;
-	i_MemWriteSIMD : in std_logic;
+	i_SIMD : in std_logic;
     i_Addresse 	: in std_logic_vector (31 downto 0);
 	i_WriteData : in std_logic_vector (31 downto 0);
 	i_WriteData2 : in std_logic_vector (31 downto 0);
@@ -345,14 +344,14 @@ port map(
 ------------------------------------------------------------------------
 -- Mémoire de données
 ------------------------------------------------------------------------
+
 inst_MemDonnees : MemDonnees
 Port map( 
 	clk 		     => clk,
 	reset 		     => reset,
 	i_MemRead	     => i_MemRead,
-	i_MemReadSIMD    => '0',
 	i_MemWrite	     => i_MemWrite,
-	i_MemWriteSIMD   => '0',
+	i_SIMD           => s_IsVec,
     i_Addresse	     => s_AluResult,
 	i_WriteData      => s_reg_data2,
 	i_WriteData2     => s_reg_v_data2(63 downto 32),
