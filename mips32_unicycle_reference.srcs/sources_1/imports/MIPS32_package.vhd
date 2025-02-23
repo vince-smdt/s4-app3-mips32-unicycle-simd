@@ -77,7 +77,7 @@ package MIPS32_package is
     constant OP_LWV   : std_logic_vector( 5 downto 0 ) := "111100"; --CHARGE UN VECTEUR
     constant OP_ADDVS : std_logic_vector( 5 downto 0 ) := "011101"; --ADDITIONNE UN VECTEUR ET UN SCALAIRE
     constant OP_MOVNV : std_logic_vector( 5 downto 0 ) := "111110"; --DEPLACE LES VALEUR PAS EGALES A ZERO
-    constant OP_MINV  : std_logic_vector( 5 downto 0 ) := "111111"; --RECUPERE LA VALEUR LA PLUS PETITE D'UN VECTEUR
+    constant OP_SLTV  : std_logic_vector( 5 downto 0 ) := "111111"; --RECUPERE LA VALEUR LA PLUS PETITE D'UN VECTEUR
 	
 	constant c_Mips32_Nop	 	: std_logic_vector(31 downto 0) := X"00000000";
 	-- equivalent au c_Mips32_Nop, mais permet de mieux visualiser dans vivado
@@ -116,6 +116,9 @@ package MIPS32_package is
 		sim_OP_SW,
 		sim_OP_LWV,
 		sim_OP_SWV,
+		sim_OP_ADDVS,
+		sim_OP_MOVNV,
+		sim_OP_SLTV,
 		sim_OP_SYSCALL,
         sim_OP_Undefined
     );
@@ -223,6 +226,12 @@ begin
             CurrentOp := sim_OP_LWV;
         when OP_SWV =>
             CurrentOp := SIM_OP_SWV;
+        when OP_ADDVS =>
+            CurrentOp := sim_OP_ADDVS;
+        when OP_MOVNV =>
+            CurrentOp := SIM_OP_MOVNV;
+        when OP_SLTV =>
+            CurrentOp := SIM_OP_SLTV;
 		when others =>
 			CurrentOp := sim_OP_Undefined;
 	end case;

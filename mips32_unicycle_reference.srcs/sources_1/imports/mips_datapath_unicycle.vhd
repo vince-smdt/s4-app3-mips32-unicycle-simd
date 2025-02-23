@@ -41,7 +41,7 @@ Port (
 	i_mfhi          : in std_logic;
 	i_SignExtend 	: in std_logic;
 	
-	i_Op            : in std_logic_vector (1 downto 0);
+	i_Op            : in std_logic_vector (5 downto 0);
 
 	o_Instruction 	: out std_logic_vector (31 downto 0);
 	o_PC		 	: out std_logic_vector (31 downto 0)
@@ -98,6 +98,7 @@ end component;
 		i_Wr_DAT : in std_logic_vector (127 downto 0);
 		i_WDest : in std_logic_vector (4 downto 0);
 		i_WE : in std_logic;
+		i_Wr_Perm : in std_logic_vector  (3 downto 0);
 		o_RS1_DAT : out std_logic_vector (127 downto 0);
 		o_RS2_DAT : out std_logic_vector (127 downto 0)
 		);
@@ -165,7 +166,10 @@ end component;
     signal r_HI             : std_logic_vector(31 downto 0);
     signal r_LO             : std_logic_vector(31 downto 0);
 	
+	signal s_IsMovnv        : std_logic;
     signal s_IsVec          : std_logic;
+    signal s_toMove         : std_logic_vector(3 downto 0);
+    
     signal s_a1             : std_logic_vector (31 downto 0);
     signal s_b1             : std_logic_vector (31 downto 0);
     signal s_a2             : std_logic_vector (31 downto 0);
@@ -247,6 +251,9 @@ s_WriteRegDestVec_muxout <= s_rt      when i_RegWrite = '1' else
 s_RegWrite <= '1' when i_RegWrite = '1' and s_IsVec = '0' else '0';
 s_RegWriteSIMD <= '1' when i_RegWrite = '1' and s_IsVec = '1' else '0';
 
+s_IsMovnv <= '1' when i_Op = "111110" else '0';
+s_toMove <= "1111" when s_IsMovnv = '0' else (s_reg_v_data2(96) & s_reg_v_data2(64) & s_reg_v_data2(32) & s_reg_v_data2(0));
+
 inst_Registres: BancRegistres 
 port map ( 
 	clk          => clk,
@@ -269,6 +276,7 @@ port map (
 	i_Wr_DAT     => s_Data2RegVec_muxout,
 	i_WDest      => s_WriteRegDestVec_muxout,
 	i_WE         => s_RegWriteSIMD,
+	i_Wr_Perm    => s_toMove,
 	o_RS1_DAT    => s_reg_v_data1,
 	o_RS2_DAT    => s_reg_v_data2
     );
@@ -283,7 +291,7 @@ s_imm_extended <= std_logic_vector(resize(  signed(s_imm16),32)) when i_SignExte
 -- Mux pour imm�diats
 s_AluB_data <= s_reg_data2 when i_ALUSrc = '0' else s_imm_extended;
 
-s_IsVec <= '1' when i_Op = "11" else '0';
+s_IsVec <= '1' when i_Op(5 downto 4) = "11" else '0';
 
 process (s_IsVec, i_Op, s_opcode, clk)
 begin
@@ -297,7 +305,7 @@ begin
         s_b2 <= s_reg_v_data2 (95 downto 64);
         s_b3 <= s_reg_v_data2 (63 downto 32);
         s_b4 <= s_reg_v_data2 (31 downto 0);
-    elsif i_Op = "01" then
+    elsif i_Op = "011101" then
         s_a1 <= s_reg_v_data1 (127 downto 96);
         s_a2 <= s_reg_v_data1 (95 downto 64);
         s_a3 <= s_reg_v_data1 (63 downto 32);

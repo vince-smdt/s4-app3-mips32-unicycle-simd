@@ -40,7 +40,7 @@ Port (
 	o_mfhi          : out std_logic;
 	o_SignExtend 	: out std_logic;
 	
-	o_Op            : out std_logic_vector(1 downto 0)
+	o_Op            : out std_logic_vector(5 downto 0)
     );
 end controleur;
 
@@ -49,7 +49,7 @@ architecture Behavioral of controleur is
     signal s_R_funct_decode   : std_logic_vector(4 downto 0);
 
 begin
-    o_op <= i_Op (5 downto 4);
+    o_op <= i_Op;
     -- Contrôles pour les différents types d'instructions
     -- 
     process( i_Op, s_R_funct_decode )
@@ -82,7 +82,9 @@ begin
 		    when OP_ADDVS =>
 			    o_AluFunct <= ALU_ADD; --MODIFIER ALU_ADD
 			when OP_MOVNV =>
-			    o_AluFunct <= ALU_MOVNV; --MODIFIER ALU_ADD
+			    o_AluFunct <= ALU_NULL; --MODIFIER ALU_ADD
+			when OP_SLTV =>
+			    o_AluFunct <= ALU_SLT; --MODIFIER ALU_ADD
             -- when OP_??? =>   -- autres cas?
 			-- sinon
             when others =>

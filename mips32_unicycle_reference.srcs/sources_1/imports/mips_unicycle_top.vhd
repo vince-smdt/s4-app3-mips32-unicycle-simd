@@ -60,7 +60,7 @@ Port (
 	clk 			: in std_logic;
 	reset 			: in std_logic;
 
-    i_Op            : in std_logic_vector(1 downto 0);
+    i_Op            : in std_logic_vector(5 downto 0);
 	i_alu_funct   	: in std_logic_vector(4 downto 0);
 	i_RegWrite    	: in std_logic;
 	i_RegDst      	: in std_logic;
@@ -138,7 +138,7 @@ Port map(
 	clk 			=> clk,
 	reset 			=> reset,
 
-    i_Op            => s_opcode(5 downto 4),
+    i_Op            => s_opcode,
 	i_alu_funct   	=> s_alu_funct,
 	i_RegWrite    	=> s_RegWrite,
 	i_RegDst      	=> s_RegDst,
