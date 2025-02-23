@@ -32,8 +32,11 @@ architecture Behavioral of MemInstructions is
 ------------------------
 --  TestMirroir
 X"20100024",
-X"3C081001", -- Load Upper dans $t0
-X"F1010000", -- Read registre vectoriel à l'adresse $t0 dans $tv0
+X"3C081001", -- Load Upper dans $t0 10010000
+X"3C091001", -- Load Upper dans $t1
+X"21290004", -- $t1 += 4 => 10010004
+X"F1010000", -- Read registre vectoriel à l'adresse $t0 dans $tv1
+X"ED210000", -- Write registre vectoriel $tv1 dans $t1
 X"3c011001",
 X"00300821",
 X"8c240000",

@@ -119,7 +119,8 @@ end component;
 	constant c_Registre31		 : std_logic_vector(4 downto 0) := "11111";
 	signal s_zero        : std_logic;
 	
-    signal s_WriteRegDest_muxout: std_logic_vector(4 downto 0);
+    signal s_WriteRegDest_muxout   : std_logic_vector(4 downto 0);
+    signal s_WriteRegDestVec_muxout: std_logic_vector(4 downto 0);
 	
     signal r_PC                    : std_logic_vector(31 downto 0);
     signal s_PC_Suivant            : std_logic_vector(31 downto 0);
@@ -240,6 +241,9 @@ s_WriteRegDest_muxout <= c_Registre31 when i_jump_link = '1' else
                          s_rt         when i_RegDst = '0' else 
 						 s_rd;
 
+s_WriteRegDestVec_muxout <= s_rt      when i_RegWrite = '1' else
+                            s_rd;
+
 s_RegWrite <= '1' when i_RegWrite = '1' and s_IsVec = '0' else '0';
 s_RegWriteSIMD <= '1' when i_RegWrite = '1' and s_IsVec = '1' else '0';
 
@@ -263,7 +267,7 @@ port map (
 	i_RS1        => s_rs,
 	i_RS2        => s_rt,
 	i_Wr_DAT     => s_Data2RegVec_muxout,
-	i_WDest      => s_rd,
+	i_WDest      => s_WriteRegDestVec_muxout,
 	i_WE         => s_RegWriteSIMD,
 	o_RS1_DAT    => s_reg_v_data1,
 	o_RS2_DAT    => s_reg_v_data2
@@ -281,9 +285,9 @@ s_AluB_data <= s_reg_data2 when i_ALUSrc = '0' else s_imm_extended;
 
 s_IsVec <= '1' when i_Op = "11" else '0';
 
-process (s_IsVec, i_Op, clk)
+process (s_IsVec, i_Op, s_opcode, clk)
 begin
-    if s_IsVec = '1' and s_opcode /= OP_LWV then
+    if s_IsVec = '1' and s_opcode /= OP_LWV and s_opcode /= OP_SWV then
         s_a1 <= s_reg_v_data1 (127 downto 96);
         s_a2 <= s_reg_v_data1 (95 downto 64);
         s_a3 <= s_reg_v_data1 (63 downto 32);
@@ -361,6 +365,7 @@ port map(
 ------------------------------------------------------------------------
 -- M�moire de donn�es
 ------------------------------------------------------------------------
+s_Reg_Wr_Data <= s_reg_v_data2(31 downto 0) when i_MemWrite = '1' and s_IsVec = '1' else s_reg_data2;
 
 inst_MemDonnees : MemDonnees
 Port map( 
@@ -370,7 +375,7 @@ Port map(
 	i_MemWrite	     => i_MemWrite,
 	i_SIMD           => s_IsVec,
     i_Addresse	     => s_AluResult,
-	i_WriteData      => s_reg_data2,
+	i_WriteData      => s_Reg_Wr_Data,
 	i_WriteData2     => s_reg_v_data2(63 downto 32),
 	i_WriteData3     => s_reg_v_data2(95 downto 64),
 	i_WriteData4     => s_reg_v_data2(127 downto 96),	
