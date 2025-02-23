@@ -36,7 +36,9 @@ X"3C081001", -- Load Upper dans $t0 10010000
 X"3C091001", -- Load Upper dans $t1
 X"21290004", -- $t1 += 4 => 10010004
 X"F1010000", -- Read registre vectoriel à l'adresse $t0 dans $tv1
-X"74220001", -- ADDVS $tv1 + 1
+X"74010001", -- ADDVS $tv1 + 1 dans $tv0
+X"FC410000", -- SLTV $tv2, $tv1, $tv0
+X"F8011000", -- MOVNV $tv1 dans $tv0 si $tv2 = 1
 X"ED210000", -- Write registre vectoriel $tv1 dans $t1
 --X"3c011001",
 --X"00300821",
