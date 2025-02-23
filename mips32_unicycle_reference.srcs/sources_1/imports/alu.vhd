@@ -82,10 +82,6 @@ begin
 				s_result <= (others => '0');
 			when ALU_LWV => 
 				s_result <= (others => '0');
-			when ALU_MOVNV => 
-				s_result <= (others => '0');
-			when ALU_MINV => 
-				s_result <= (others => '0');
             when others =>
                 s_result <= i_a and i_b;
                 s_unsupported <= '1';
