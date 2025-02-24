@@ -287,21 +287,12 @@ s_imm_extended <= std_logic_vector(resize(  signed(s_imm16),32)) when i_SignExte
 -- Mux pour imm�diats
 s_AluB_data <= s_reg_data2 when i_ALUSrc = '0' else s_imm_extended;
 
-s_IsVec <= '1' when i_Op(5 downto 4) = "11" else '0';
+s_IsVec <= '1' when i_Op(5 downto 4) = "11" or 
+                    i_Op(5 downto 4) = "01" else '0';
 
 process (s_IsVec, i_Op, s_opcode, clk)
 begin
-    if s_IsVec = '1' and s_opcode /= OP_LWV and s_opcode /= OP_SWV then
-        s_a1 <= s_reg_v_data1 (127 downto 96);
-        s_a2 <= s_reg_v_data1 (95 downto 64);
-        s_a3 <= s_reg_v_data1 (63 downto 32);
-        s_a4 <= s_reg_v_data1 (31 downto 0);
-        
-        s_b1 <= s_reg_v_data2 (127 downto 96);
-        s_b2 <= s_reg_v_data2 (95 downto 64);
-        s_b3 <= s_reg_v_data2 (63 downto 32);
-        s_b4 <= s_reg_v_data2 (31 downto 0);
-    elsif i_Op = "011101" then
+    if i_Op = "011101" then
         s_a1 <= s_reg_v_data1 (127 downto 96);
         s_a2 <= s_reg_v_data1 (95 downto 64);
         s_a3 <= s_reg_v_data1 (63 downto 32);
@@ -311,6 +302,16 @@ begin
         s_b2 <= s_AluB_data;
         s_b3 <= s_AluB_data;
         s_b4 <= s_AluB_data;
+    elsif s_IsVec = '1' and s_opcode /= OP_LWV and s_opcode /= OP_SWV then
+        s_a1 <= s_reg_v_data1 (127 downto 96);
+        s_a2 <= s_reg_v_data1 (95 downto 64);
+        s_a3 <= s_reg_v_data1 (63 downto 32);
+        s_a4 <= s_reg_v_data1 (31 downto 0);
+        
+        s_b1 <= s_reg_v_data2 (127 downto 96);
+        s_b2 <= s_reg_v_data2 (95 downto 64);
+        s_b3 <= s_reg_v_data2 (63 downto 32);
+        s_b4 <= s_reg_v_data2 (31 downto 0);
     else
         s_a1 <= s_reg_data1;
         s_a2 <= (others => '0');

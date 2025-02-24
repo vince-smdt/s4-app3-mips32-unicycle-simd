@@ -38,33 +38,27 @@ X"3c011001", -- la $a1, sinput
 X"34250040",
 X"3c011001", -- la $a2, soutput
 X"34260050",
-X"0c100013", -- jar CalculSurvivant
+X"0c100011", -- jar CalculSurvivant
 X"2002000a", -- $v0 = 10
 X"0000000c", -- syscall
 
 -- acs
 X"F0800000", -- lwv $tv0, 0($a0)        -- met => $tv0
 X"8ca90000", -- lw $t1, 0($a1)          -- sinput[j] => $t1
-X"3C081001", -- lui $t0, 0x1001
-X"20080060", -- addi $t0, $zero, 0x60
-X"F1020000", -- lwv $tv2, 0($t0)        -- 250 => $tv2
-X"74404800", -- addvs $tv2, $tv0, $t1   -- temp = met+sinput[j]
+X"F0C10000", -- lwv $tv1, 0($a2)       -- soutput => $tv1
+X"74091000", -- addvs $tv2, $tv0, $t1   -- temp = met+sinput[j]
 X"FC620800", -- sltv $tv3, $tv2, $tv1   -- temp < soutput
 X"74821800", -- movnv $tv4, $tv2, $tv3  -- soutput = temp < soutput ? temp : output
-X"ECC40000", -- swv $tv4, 0($a2)        -- save soutput -- 111011 00110 00100 00000 00000 000000
+X"ECC40000", -- swv $tv4, 0($a2)        -- save soutput
 X"03E00008", -- jr $ra
 
 -- calcul survivant
+X"210800fa",
+X"74080000", -- addvs $tv0, $tv0, $t0   -- Chaque output = 250
 X"23bdfff0",
 X"afbf0004",
-X"3c011001",
-X"34240000",
 X"afa40008",
-X"3c011001",
-X"34250040",
 X"afa5000c",
-X"3c011001",
-X"34260050",
 X"afa60010",
 X"00008021",
 X"20010004",
@@ -78,8 +72,8 @@ X"8fa5000c",
 X"20a50004",
 X"afa5000c",
 X"8fa60010",
-X"0810001f",
-X"8fbf0000",
+X"08100019",
+X"8fbf0004",
 X"23bd0010",
 X"03e00008",
 

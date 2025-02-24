@@ -132,6 +132,7 @@ begin
 	o_RegWrite		<= '1' when i_Op = OP_Rtype or 
 								i_Op = OP_ADDI or 
 								i_Op = OP_ADDIU or 
+								i_OP = OP_ADDVS or
 								i_Op = OP_ORI or 
 								i_Op = OP_LUI or 
 								i_Op = OP_LW or 
