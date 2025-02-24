@@ -166,7 +166,6 @@ end component;
     signal r_HI             : std_logic_vector(31 downto 0);
     signal r_LO             : std_logic_vector(31 downto 0);
 	
-	signal s_IsMovnv        : std_logic;
     signal s_IsVec          : std_logic;
     signal s_toMove         : std_logic_vector(3 downto 0);
     
@@ -188,10 +187,10 @@ o_PC	<= r_PC; -- permet au synth�tiseur de sortir de la logique. Sinon, il enl
 ------------------------------------------------------------------------
 -- simplification des noms de signaux et transformation des types
 ------------------------------------------------------------------------
-s_opcode        <= s_Instruction(31 downto 26);
-s_RS            <= s_Instruction(25 downto 21);
-s_RT            <= s_Instruction(20 downto 16);
-s_RD            <= s_Instruction(15 downto 11);
+s_opcode        <= s_Instruction(31 downto 26);--111111
+s_RS            <= s_Instruction(25 downto 21);--00001
+s_RT            <= s_Instruction(20 downto 16);--01010
+s_RD            <= s_Instruction(15 downto 11);--00000
 s_shamt         <= s_Instruction(10 downto  6);
 s_instr_funct   <= s_Instruction( 5 downto  0);
 s_imm16         <= s_Instruction(15 downto  0);
@@ -250,9 +249,6 @@ s_WriteRegDestVec_muxout <= s_rt      when i_RegWrite = '1' else
 
 s_RegWrite <= '1' when i_RegWrite = '1' and s_IsVec = '0' else '0';
 s_RegWriteSIMD <= '1' when i_RegWrite = '1' and s_IsVec = '1' else '0';
-
-s_IsMovnv <= '1' when i_Op = "111110" else '0';
-s_toMove <= "1111" when s_IsMovnv = '0' else (s_reg_v_data2(96) & s_reg_v_data2(64) & s_reg_v_data2(32) & s_reg_v_data2(0));
 
 inst_Registres: BancRegistres 
 port map ( 
@@ -406,7 +402,10 @@ s_Data2Reg_muxout    <= s_adresse_PC_plus_4 when i_jump_link = '1' else
 
 s_Data2RegVec_muxout <= s_AluResult4 & s_AluResult3 & s_AluResult2 & s_AluResult when i_MemtoReg = '0' else
                         s_MemoryReadData4 & s_MemoryReadData3 & s_MemoryReadData2 & s_MemoryReadData;
-		
+
+s_toMove <= (s_AluResult4(0) & s_AluResult3(0) & s_AluResult3(0) & s_AluResult(0)) when i_Op = "111111" else
+            s_toMove when i_Op = "111110" else 
+            "1111";		
 ------------------------------------------------------------------------
 -- Registres sp�ciaux pour la multiplication
 ------------------------------------------------------------------------				

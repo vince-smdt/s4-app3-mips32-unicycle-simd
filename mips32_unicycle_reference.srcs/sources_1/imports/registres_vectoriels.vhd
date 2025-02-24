@@ -17,7 +17,7 @@ use ieee.std_logic_1164.ALL;
 use ieee.numeric_std.all;
 use work.MIPS32_package.all;
 
-entity BancRegistresVectoriels is --Nouvelle entree 3-0
+entity BancRegistresVectoriels is
     Port ( clk       : in  std_logic;
            reset     : in  std_logic;
            i_RS1     : in  std_logic_vector (4 downto 0);
