@@ -244,7 +244,7 @@ s_WriteRegDest_muxout <= c_Registre31 when i_jump_link = '1' else
                          s_rt         when i_RegDst = '0' else 
 						 s_rd;
 
-s_WriteRegDestVec_muxout <= s_rt      when i_RegWrite = '1' else
+s_WriteRegDestVec_muxout <= s_rt      when i_RegWrite = '1' and s_opcode /= OP_ADDVS and s_opcode /= OP_SLTV and s_opcode /= OP_MOVNV else
                             s_rd;
 
 s_RegWrite <= '1' when i_RegWrite = '1' and s_IsVec = '0' else '0';
@@ -292,16 +292,26 @@ s_IsVec <= '1' when i_Op(5 downto 4) = "11" or
 
 process (s_IsVec, i_Op, s_opcode, clk)
 begin
-    if i_Op = "011101" then
-        s_a1 <= s_reg_v_data1 (127 downto 96);
-        s_a2 <= s_reg_v_data1 (95 downto 64);
-        s_a3 <= s_reg_v_data1 (63 downto 32);
-        s_a4 <= s_reg_v_data1 (31 downto 0);
+    if s_opcode = OP_ADDVS then
+        s_a1 <= s_reg_v_data1 (31 downto 0);
+        s_a2 <= s_reg_v_data1 (63 downto 32);
+        s_a3 <= s_reg_v_data1 (95 downto 64);
+        s_a4 <= s_reg_v_data1 (127 downto 96);
         
         s_b1 <= s_AluB_data;
         s_b2 <= s_AluB_data;
         s_b3 <= s_AluB_data;
         s_b4 <= s_AluB_data;
+    elsif s_opcode = OP_MOVNV then
+        s_a1 <= s_reg_v_data1 (31 downto 0);
+        s_a2 <= s_reg_v_data1 (63 downto 32);
+        s_a3 <= s_reg_v_data1 (95 downto 64);
+        s_a4 <= s_reg_v_data1 (127 downto 96);
+        
+        s_b1 <= (others => '0');
+        s_b2 <= (others => '0');
+        s_b3 <= (others => '0');
+        s_b4 <= (others => '0');
     elsif s_IsVec = '1' and s_opcode /= OP_LWV and s_opcode /= OP_SWV then
         s_a1 <= s_reg_v_data1 (127 downto 96);
         s_a2 <= s_reg_v_data1 (95 downto 64);
@@ -404,7 +414,7 @@ s_Data2Reg_muxout    <= s_adresse_PC_plus_4 when i_jump_link = '1' else
 s_Data2RegVec_muxout <= s_AluResult4 & s_AluResult3 & s_AluResult2 & s_AluResult when i_MemtoReg = '0' else
                         s_MemoryReadData4 & s_MemoryReadData3 & s_MemoryReadData2 & s_MemoryReadData;
 
-s_toMove <= (s_AluResult4(0) & s_AluResult3(0) & s_AluResult3(0) & s_AluResult(0)) when i_Op = "111111" else
+s_toMove <= (s_AluResult(0) & s_AluResult2(0) & s_AluResult3(0) & s_AluResult4(0)) when i_Op = "111111" else
             s_toMove when i_Op = "111110" else 
             "1111";		
 ------------------------------------------------------------------------

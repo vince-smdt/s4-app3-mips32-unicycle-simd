@@ -82,7 +82,7 @@ begin
 		    when OP_ADDVS =>
 			    o_AluFunct <= ALU_ADD; --MODIFIER ALU_ADD
 			when OP_MOVNV =>
-			    o_AluFunct <= ALU_NULL; --MODIFIER ALU_ADD
+			    o_AluFunct <= ALU_ADD; --MODIFIER ALU_ADD
 			when OP_SLTV =>
 			    o_AluFunct <= ALU_SLT; --MODIFIER ALU_ADD
             -- when OP_??? =>   -- autres cas?
@@ -137,6 +137,8 @@ begin
 								i_Op = OP_LUI or 
 								i_Op = OP_LW or 
 								i_Op = OP_LWV or
+								i_Op = OP_SLTV or
+								i_Op = OP_MOVNV or
 								i_Op = OP_JAL
 						else '0';
 	

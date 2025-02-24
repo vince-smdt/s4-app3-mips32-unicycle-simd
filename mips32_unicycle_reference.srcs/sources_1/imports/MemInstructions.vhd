@@ -47,14 +47,15 @@ X"F0800000", -- lwv $tv0, 0($a0)        -- met => $tv0
 X"8ca90000", -- lw $t1, 0($a1)          -- sinput[j] => $t1
 X"F0C10000", -- lwv $tv1, 0($a2)       -- soutput => $tv1
 X"74091000", -- addvs $tv2, $tv0, $t1   -- temp = met+sinput[j]
-X"FC620800", -- sltv $tv3, $tv2, $tv1   -- temp < soutput
-X"74821800", -- movnv $tv4, $tv2, $tv3  -- soutput = temp < soutput ? temp : output
+X"FC411800", -- sltv $tv3, $tv2, $tv1   -- temp < soutput
+X"F8432000", -- movnv $tv4, $tv2, $tv3  -- soutput = temp < soutput ? temp : output
 X"ECC40000", -- swv $tv4, 0($a2)        -- save soutput
 X"03E00008", -- jr $ra
 
 -- calcul survivant
 X"210800fa",
-X"74080000", -- addvs $tv0, $tv0, $t0   -- Chaque output = 250
+X"74080000",
+X"ECC00000",
 X"23bdfff0",
 X"afbf0004",
 X"afa40008",
@@ -72,7 +73,7 @@ X"8fa5000c",
 X"20a50004",
 X"afa5000c",
 X"8fa60010",
-X"08100019",
+X"0810001a",
 X"8fbf0004",
 X"23bd0010",
 X"03e00008",
