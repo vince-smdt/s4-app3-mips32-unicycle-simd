@@ -1,14 +1,14 @@
 ---------------------------------------------------------------------------------------------
 --
---	Université de Sherbrooke 
---  Département de génie électrique et génie informatique
+--	Universitï¿½ de Sherbrooke 
+--  Dï¿½partement de gï¿½nie ï¿½lectrique et gï¿½nie informatique
 --
 --	S4i - APP4 
 --	
 --
---	Auteur: 		Marc-André Tétrault
+--	Auteur: 		Marc-Andrï¿½ Tï¿½trault
 --					Daniel Dalle
---					Sébastien Roy
+--					Sï¿½bastien Roy
 -- 
 ---------------------------------------------------------------------------------------------
 
@@ -28,47 +28,60 @@ end MemInstructions;
 architecture Behavioral of MemInstructions is
     signal ram_Instructions : RAM(0 to 255) := (
 ------------------------
--- Insérez votre code ici
+-- Insï¿½rez votre code ici
 ------------------------
---  TestMirroir
-X"20100024",
-X"200a0001", --$t2 à 1
-X"3C081001", -- Load Upper dans $t0 10010000
-X"3C091001", -- Load Upper dans $t1
-X"21290004", -- $t1 += 4 => 10010004
-X"F1010000", -- Read registre vectoriel à l'adresse $t0 dans $tv1
-X"742A0000", -- ADDVS $tv1 + 1 dans $tv0
-X"FC201000", -- SLTV $tv2, $tv1, $tv0
-X"F8110000", -- MOVNV $tv1 dans $tv0 si $tv2 = 1
-X"ED210000", -- Write registre vectoriel $tv1 dans $t1
---X"3c011001",
---X"00300821",
---X"8c240000",
---X"0004c820",
---X"0c100007",
---X"08100015",
---X"00805020",
---X"00001020",
---X"200cffff",
---X"340b8000",
---X"000b5c00",
---X"20090020",
---X"11200006",
---X"00021042",
---X"014b4024",
---X"00481025",
---X"000a5040",
---X"2129ffff",
---X"0810000d",
---X"03e00008",
---X"00402820",
---X"22100004",
---X"3c011001",
---X"00300821",
---X"ac220000",
---X"2002000a",
---X"0000000c",
 
+-- main
+X"3c011001", -- la $a0, met
+X"34240000",
+X"3c011001", -- la $a1, sinput
+X"34250040",
+X"3c011001", -- la $a2, soutput
+X"34260050",
+X"0c100013", -- jar CalculSurvivant
+X"2002000a", -- $v0 = 10
+X"0000000c", -- syscall
+
+-- acs
+X"F0800000", -- lwv $tv0, 0($a0)        -- met => $tv0
+X"8ca90000", -- lw $t1, 0($a1)          -- sinput[j] => $t1
+X"3C081001", -- lui $t0, 0x1001
+X"20080060", -- addi $t0, $zero, 0x60
+X"F1020000", -- lwv $tv2, 0($t0)        -- 250 => $tv2
+X"74404800", -- addvs $tv2, $tv0, $t1   -- temp = met+sinput[j]
+X"FC620800", -- sltv $tv3, $tv2, $tv1   -- temp < soutput
+X"74821800", -- movnv $tv4, $tv2, $tv3  -- soutput = temp < soutput ? temp : output
+X"ECC40000", -- swv $tv4, 0($a2)        -- save soutput -- 111011 00110 00100 00000 00000 000000
+X"03E00008", -- jr $ra
+
+-- calcul survivant
+X"23bdfff0",
+X"afbf0004",
+X"3c011001",
+X"34240000",
+X"afa40008",
+X"3c011001",
+X"34250040",
+X"afa5000c",
+X"3c011001",
+X"34260050",
+X"afa60010",
+X"00008021",
+X"20010004",
+X"1030000a",
+X"0c100009",
+X"22100001",
+X"8fa40008",
+X"20840010",
+X"afa40008",
+X"8fa5000c",
+X"20a50004",
+X"afa5000c",
+X"8fa60010",
+X"0810001f",
+X"8fbf0000",
+X"23bd0010",
+X"03e00008",
 
 ------------------------
 -- Fin de votre code
@@ -81,7 +94,7 @@ begin
     -- Conserver seulement l'indexage des mots de 32-bit/4 octets
     s_MemoryIndex <= to_integer(unsigned(i_addresse(9 downto 2)));
 
-    -- Si PC vaut moins de 127, présenter l'instruction en mémoire
+    -- Si PC vaut moins de 127, prï¿½senter l'instruction en mï¿½moire
     o_instruction <= ram_Instructions(s_MemoryIndex) when i_addresse(31 downto 10) = (X"00400" & "00")
                     -- Sinon, retourner l'instruction nop X"00000000": --> AND $zero, $zero, $zero  
                     else (others => '0');
